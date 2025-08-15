@@ -1,11 +1,13 @@
-GRID_SIZE = 4
-PIT_PROBABILITY = 0.2
-
-# CELL_SIZE = 120
-# INFO_PANEL_WIDTH = 400
-# WINDOW_WIDTH = GRID_SIZE * CELL_SIZE + INFO_PANEL_WIDTH
-# WINDOW_HEIGHT = GRID_SIZE * CELL_SIZE
-# GAME_SPEED_FPS = 5
+GRID_SIZE = 4            
+PIT_PROBABILITY = 0.2       
+MAX_WUMPUS = 2             
+GOLD_REWARD = 10         
+MOVE_COST = -1         
+TURN_COST = -1      
+SHOOT_COST = -10      
+DEATH_PENALTY = -1000    
+CLIMB_REWARD = 1000     
+CLIMB_NO_GOLD = 0        
 
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
@@ -29,8 +31,10 @@ ACTION_GRAB = 'Grab'
 ACTION_CLIMB = 'Climb'
 
 DIRECTIONS = {
-    'up': (0, -1),
-    'down': (0, 1),
+    'up': (0, 1),
+    'down': (0, -1),
     'left': (-1, 0),
     'right': (1, 0)
 }
+
+WUMPUS_MOVE_INTERVAL = 5 
