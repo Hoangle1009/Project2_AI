@@ -26,6 +26,12 @@ def save_map_to_file(world, folder='testcases'):
         for r in range(world.size):
             row_repr = []
             for c in range(world.size):
+                if (c, r) == (0, 7) and grid_repr[r][c] == ' ':
+                    grid_repr[r][c] = 'S'
+        
+        for r in range(world.size):
+            row_repr = []
+            for c in range(world.size):
                 cell = world.grid[r][c]
                 if (c, r) == (0, 0) and cell == ' ':
                     row_repr.append('S')
@@ -103,3 +109,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
