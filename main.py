@@ -22,7 +22,7 @@ def save_map_to_file(world, folder='testcases'):
         grid_repr = [list(row) for row in world.grid]
         for r in range(world.size):
             for c in range(world.size):
-                if (c, r) == (0, 0) and grid_repr[r][c] == ' ':
+                if (c, r) == (0, 7) and grid_repr[r][c] == ' ':
                     grid_repr[r][c] = 'S'
         
         for row in grid_repr:
