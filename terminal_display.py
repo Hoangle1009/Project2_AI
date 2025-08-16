@@ -12,9 +12,9 @@ COLOR_MAP = {
 }
 
 def print_live_map(world, agent, percepts, last_action):
-    """Hiển thị map live trong terminal với màu sắc."""
+    """Hiển thị map live trong terminal với màu sắc và hướng agent."""
     # clear terminal
-    print("\033[H\033[J", end='')
+    # print("\033[H\033[J", end='')
 
     print("="*50)
     print(f"WUMPUS WORLD - TERMINAL VERSION")
@@ -23,14 +23,22 @@ def print_live_map(world, agent, percepts, last_action):
     percept_str = ", ".join([p.upper() for p, v in percepts.items() if v])
     print(f"Percepts: {percept_str if percept_str else 'None'}")
     print("-"*50)
+    world.print_position()
 
-    for r in range(world.size):
+    orientation_symbol = {
+        "up": "^",
+        "down": "v",
+        "left": "<",
+        "right": ">"
+    }
+
+    for r in range(world.size - 1, -1, -1):
         for c in range(world.size):
             cell_char = "   "
             cell_color = COLOR_MAP['unknown']
 
             if agent.pos == (c, r):
-                cell_char = " A "
+                cell_char = f" {orientation_symbol[agent.orientation]} "
                 cell_color = COLOR_MAP['agent']
             elif not agent.kb[r][c]['visited']:
                 cell_char = " ? "
@@ -53,5 +61,5 @@ def print_live_map(world, agent, percepts, last_action):
             print(f"{cell_color}{cell_char}{COLOR_MAP['reset']}", end='')
         print()
     print("-"*50)
-    print("Legend: A=Agent, ?=Unknown, .=Safe, G=Gold, P=Pit, W=Wumpus")
+    print("Legend: ^v<> = Agent hướng, ?=Unknown, .=Safe, G=Gold, P=Pit, W=Wumpus")
     print("-"*50)

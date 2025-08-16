@@ -23,23 +23,25 @@ def save_map_to_file(world, folder='testcases'):
         f.write(f"Pits: {world.pit_pos}\n")
         f.write(f"Gold: {world.gold_pos}\n\n")
 
-        for r in range(world.size):
+        for r in reversed(range(world.size)):
             row_repr = []
             for c in range(world.size):
                 cell = world.grid[r][c]
                 if (c, r) == (0, 0) and cell == ' ':
-                    row_repr.append('S')
+                    row_repr.append('S') 
+                elif (c, r) == world.agent_pos:
+                    row_repr.append('A') 
                 else:
                     row_repr.append(cell)
             f.write(' '.join(row_repr) + '\n')
 
     print(f"Bản đồ đã được lưu vào: {filename}")
 
-    # Giữ lại 3 bản đồ gần nhất
     all_maps = sorted([os.path.join(folder, f) for f in os.listdir(folder) if f.startswith('map_')])
     if len(all_maps) > 3:
         for old_map in all_maps[:-3]:
             os.remove(old_map)
+
 
 def get_user_choices():
     """Lấy lựa chọn của người dùng về tác tử và thuật toán."""
@@ -54,11 +56,14 @@ def get_user_choices():
             planning_algo = input("Chọn thuật toán cho Hybrid Agent (astar, bfs): ").lower()
     else:
         agent_type = 'random'
-    return agent_type, planning_algo
+    while move_wumpus not in ['y','n']:
+        move_wumpus = input("Cho phép Wumpus di chuyển không? (y/n): ").lower()
+
+    return agent_type, planning_algo, (move_wumpus=='y')
 
 def main():
-    agent_type, planning_algorithm = get_user_choices()
-    world = WumpusWorld(size=GRID_SIZE, pit_prob=PIT_PROBABILITY)
+    agent_type, planning_algorithm, wumpus_can_move = get_user_choices()
+    world = WumpusWorld(size=GRID_SIZE, pit_prob=PIT_PROBABILITY, wumpus_can_move=wumpus_can_move)
     save_map_to_file(world)
 
     if agent_type == 'hybrid':
@@ -66,7 +71,6 @@ def main():
         print(f"{Fore.YELLOW}Đã khởi tạo Hybrid Agent với thuật toán: {planning_algorithm.upper()}{Style.RESET_ALL}")
     else:
         agent = RandomAgent(size=GRID_SIZE)
-        # Thêm pos và kb để terminal print không lỗi
         agent.pos = (0, 0)
         agent.orientation = 'right'
         agent.kb = [[{'visited': False} for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
@@ -74,12 +78,12 @@ def main():
 
     time.sleep(1)
     last_action = "Start"
-
+    turn = 0
+    action_count = 0
     while not world.game_over:
+        if action_count ==5:
+            action_count = 0
         current_percepts = world.get_percepts()
-        # Hiển thị live map cho mọi agent
-        print_live_map(world, agent, current_percepts, last_action)
-            
         agent.update_kb(current_percepts, last_action)
 
         if current_percepts['glitter']:
@@ -88,18 +92,27 @@ def main():
             action = agent.choose_action()
 
         world.execute_action(action)
-        last_action = action
+        action_count += 1
 
+        if world.wumpus_can_move and action_count % 5 == 0:
+            world.move_wumpus()
+        last_action = action
+        if(last_action == ACTION_SHOOT):
+            world._shoot_arrow()
         if isinstance(agent, RandomAgent):
             print(f"{Fore.CYAN}Random Agent action: {last_action}, Score: {world.score}{Style.RESET_ALL}")
-
-        time.sleep(0.5)  # Cập nhật nhanh cho demo
+        if turn > 0:
+            print_live_map(world, agent, current_percepts, last_action)
+        turn += 1
+        time.sleep(1) 
 
     print("\n" + "="*40)
     print(f"{Fore.GREEN}GAME OVER!{Style.RESET_ALL}")
     print(f"Final Outcome: {world.game_outcome}")
     print(f"Final Score: {world.score}")
+    print(agent.action_log)
     print("="*40)
 
 if __name__ == '__main__':
     main()
+
