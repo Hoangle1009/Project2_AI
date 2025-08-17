@@ -1,12 +1,12 @@
 import random
 import numpy as np
 from config import *
-
+from terminal_display import print_final_map, print_wumpus_die
 class WumpusWorld:
-    def __init__(self, size=GRID_SIZE, pit_prob=PIT_PROBABILITY, num_wumpus=2, moving_wumpus=False):
+    def __init__(self, size=GRID_SIZE, pit_prob=PIT_PROBABILITY,moving_wumpus=False ):
         self.size = size
         self.pit_prob = pit_prob
-        self.num_wumpus = num_wumpus
+        self.num_wumpus = 2
         self.moving_wumpus = moving_wumpus
         self.turn_count = 0
 
@@ -140,8 +140,8 @@ class WumpusWorld:
             self.game_over = True
             return
         # Move Wumpus if enabled
-        if self.moving_wumpus and self.turn_count % 5 == 0:
-            self._move_all_wumpuses()
+        # if self.moving_wumpus and self.turn_count % 5 == 0:
+        #     self._move_all_wumpuses()
 
     def _move_forward(self):
         dx, dy = DIRECTIONS[self.agent_orientation]
@@ -171,11 +171,15 @@ class WumpusWorld:
                 self.wumpus_positions.remove((x, y))   # Xóa khỏi set
                 self.grid[y, x] = ' '                 # ✅ Xóa khỏi map luôn
                 self.scream = True
+                print_wumpus_die(self)
+
                 break  # chỉ giết 1 con đầu tiên
 
     def _move_all_wumpuses(self):
+        
         new_positions = set()
         for wx, wy in self.wumpus_positions:
+            print(f"Wumpus before move: {self.wumpus_positions}")
             candidates = [(wx+dx, wy+dy) for dx, dy in [(0,1),(0,-1),(1,0),(-1,0)]
                           if 0 <= wx+dx < self.size and 0 <= wy+dy < self.size
                           and (wx+dx, wy+dy) not in self.pit_pos
@@ -185,7 +189,16 @@ class WumpusWorld:
                 new_positions.add(random.choice(candidates))
             else:
                 new_positions.add((wx, wy))
+            
         self.wumpus_positions = new_positions
+        for wx, wy in self.wumpus_positions:
+            print(f"Wumpus positions after move: {self.wumpus_positions}")
+        for r in range(self.size):
+            for c in range(self.size):
+                if (c, r) in self.wumpus_positions:
+                    self.grid[r, c] = 'W'
+                elif self.grid[r, c] == 'W':
+                    self.grid[r, c] = ' '
 
     def display_map(self, agent=None):
         """Show full map for debugging."""

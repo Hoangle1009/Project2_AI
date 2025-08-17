@@ -1,4 +1,4 @@
-GRID_SIZE = 4            
+GRID_SIZE = 8            
 PIT_PROBABILITY = 0.2       
 MAX_WUMPUS = 2             
 GOLD_REWARD = 10         

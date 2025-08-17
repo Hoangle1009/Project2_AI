@@ -63,3 +63,81 @@ def print_live_map(world, agent, percepts, last_action):
     print("-"*50)
     print("Legend: ^v<> = Agent hướng, ?=Unknown, .=Safe, G=Gold, P=Pit, W=Wumpus")
     print("-"*50)
+def print_final_map(world, agent):
+    """Hiển thị bản đồ cuối cùng sau khi chơi, không còn ô unknown."""
+    print("="*50)
+    print("FINAL WUMPUS WORLD MAP")
+    print("="*50)
+    orientation_symbol = {
+        "up": "^",
+        "down": "v",
+        "left": "<",
+        "right": ">"
+    }
+
+    for r in range(world.size - 1, -1, -1):
+        for c in range(world.size):
+            cell_char = "   "
+            cell_color = COLOR_MAP['safe']  # mặc định ô safe
+
+            if agent.pos == (c, r):
+                cell_char = f" {orientation_symbol[agent.orientation]} "
+                cell_color = COLOR_MAP['agent']
+            else:
+                content = world.grid[r, c]
+                if content == 'G':
+                    cell_char = ' G '
+                    cell_color = COLOR_MAP['gold']
+                elif content == 'P':
+                    cell_char = ' P '
+                    cell_color = COLOR_MAP['pit']
+                elif content == 'W':
+                    cell_char = ' W '
+                    cell_color = COLOR_MAP['wumpus']
+                else:
+                    cell_char = ' . '
+                    cell_color = COLOR_MAP['safe']
+
+            print(f"{cell_color}{cell_char}{COLOR_MAP['reset']}", end='')
+        print()
+    print("-"*50)
+    print("Legend: ^v<> = Agent hướng, .=Safe, G=Gold, P=Pit, W=Wumpus")
+    print("-"*50)
+
+def print_wumpus_die(world):
+    """Hiển thị bản đồ cuối cùng sau khi chơi, không còn ô unknown."""
+    print("="*50)
+    print("FINAL WUMPUS WORLD MAP")
+    print("="*50)
+    orientation_symbol = {
+        "up": "^",
+        "down": "v",
+        "left": "<",
+        "right": ">"
+    }
+
+    for r in range(world.size - 1, -1, -1):
+        for c in range(world.size):
+            cell_char = "   "
+            cell_color = COLOR_MAP['safe']  # mặc định ô safe
+
+
+            content = world.grid[r, c]
+            if content == 'G':
+                cell_char = ' G '
+                cell_color = COLOR_MAP['gold']
+            elif content == 'P':
+                cell_char = ' P '
+                cell_color = COLOR_MAP['pit']
+            elif content == 'W':
+                cell_char = ' W '
+                cell_color = COLOR_MAP['wumpus']
+            else:
+                cell_char = ' . '
+                cell_color = COLOR_MAP['safe']
+
+            print(f"{cell_color}{cell_char}{COLOR_MAP['reset']}", end='')
+        print()
+    print("-"*50)
+    print("Legend: ^v<> = Agent hướng, .=Safe, G=Gold, P=Pit, W=Wumpus")
+    print("-"*50)

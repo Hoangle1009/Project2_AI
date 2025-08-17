@@ -6,7 +6,7 @@ from colorama import init, Fore, Style
 from config import *
 from environment import WumpusWorld
 from agent import HybridAgent, RandomAgent
-from terminal_display import print_live_map
+from terminal_display import print_live_map, print_final_map
 
 # Khởi tạo colorama cho Windows
 init(autoreset=True)
@@ -47,6 +47,7 @@ def get_user_choices():
     """Lấy lựa chọn của người dùng về tác tử và thuật toán."""
     agent_type = ''
     planning_algo = None
+    move_wumpus = ' '
     while agent_type not in ['1', '2']:
         agent_type = input("Chọn loại tác tử (1: Hybrid, 2: Random): ")
     
@@ -60,10 +61,9 @@ def get_user_choices():
         move_wumpus = input("Cho phép Wumpus di chuyển không? (y/n): ").lower()
 
     return agent_type, planning_algo, (move_wumpus=='y')
-
 def main():
     agent_type, planning_algorithm, wumpus_can_move = get_user_choices()
-    world = WumpusWorld(size=GRID_SIZE, pit_prob=PIT_PROBABILITY, wumpus_can_move=wumpus_can_move)
+    world = WumpusWorld(size=GRID_SIZE, pit_prob=PIT_PROBABILITY, moving_wumpus=wumpus_can_move)
     save_map_to_file(world)
 
     if agent_type == 'hybrid':
@@ -71,10 +71,7 @@ def main():
         print(f"{Fore.YELLOW}Đã khởi tạo Hybrid Agent với thuật toán: {planning_algorithm.upper()}{Style.RESET_ALL}")
     else:
         agent = RandomAgent(size=GRID_SIZE)
-        agent.pos = (0, 0)
-        agent.orientation = 'right'
-        agent.kb = [[{'visited': False} for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
-        print(f"{Fore.CYAN}Đã khởi tạo Random Agent.{Style.RESET_ALL}")
+        
 
     time.sleep(1)
     last_action = "Start"
@@ -94,8 +91,8 @@ def main():
         world.execute_action(action)
         action_count += 1
 
-        if world.wumpus_can_move and action_count % 5 == 0:
-            world.move_wumpus()
+        if world.moving_wumpus and action_count % 5 == 0:
+            world._move_all_wumpuses()
         last_action = action
         if(last_action == ACTION_SHOOT):
             world._shoot_arrow()
@@ -104,7 +101,8 @@ def main():
         if turn > 0:
             print_live_map(world, agent, current_percepts, last_action)
         turn += 1
-        time.sleep(1) 
+        time.sleep(0.5) 
+    print_final_map(world, agent)
 
     print("\n" + "="*40)
     print(f"{Fore.GREEN}GAME OVER!{Style.RESET_ALL}")

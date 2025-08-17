@@ -52,26 +52,26 @@ def astar_path(start, goal, safe_cells, size, cost_map=None):
                 ))
 
     return None
-def bfs_path_to_risk(start, target, safe_cells, size):
+def bfs_path_to_risk(start, target, kb, size):
     """
-    BFS tìm đường từ start tới target, cho phép target chưa nằm trong safe_cells
+    BFS tìm đường từ start tới target, cho phép target chưa nằm trong safe_cells.
+    Chỉ đi qua ô đã safe (ok) hoặc đã visited.
     """
     queue = deque([(start, [start])])
-    visited = {start}
-
-    # Tạo tập allowed_cells = tất cả safe_cells + target
-    allowed_cells = safe_cells | {target}
-
+    visited_bfs = {start}
+    print(f"[DEBUG] BFS path from {start} to {target}")
     while queue:
         (x, y), path = queue.popleft()
         if (x, y) == target:
             return path
 
         for dx, dy in [(0,1),(0,-1),(1,0),(-1,0)]:
-            nx, ny = x+dx, y+dy
-            if 0 <= nx < size and 0 <= ny < size and (nx, ny) in allowed_cells and (nx, ny) not in visited:
-                visited.add((nx, ny))
-                queue.append(((nx, ny), path + [(nx, ny)]))
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < size and 0 <= ny < size and (nx, ny) not in visited_bfs:
+                # Chỉ đi qua ô đã safe hoặc đã từng visit
+                if kb[ny][nx]['ok'] or kb[ny][nx]['visited']:
+                    visited_bfs.add((nx, ny))
+                    queue.append(((nx, ny), path + [(nx, ny)]))
 
     return None
 
