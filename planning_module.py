@@ -76,14 +76,10 @@ def bfs_path_to_risk(start, target, kb, size):
     return None
 
 
-def astar_path_to_risk(start, target, safe_cells, size, cost_map=None):
-    """
-    A* tìm đường từ start tới target, cho phép target chưa nằm trong safe_cells
-    """
+def astar_path_to_risk(start, target, kb, size, cost_map=None):
     def heuristic(a, b):
         return abs(a[0]-b[0]) + abs(a[1]-b[1])
 
-    allowed_cells = safe_cells | {target}
     open_set = [(heuristic(start, target), 0, start, [start])]
     visited = {}
 
@@ -99,13 +95,14 @@ def astar_path_to_risk(start, target, safe_cells, size, cost_map=None):
         x, y = current
         for dx, dy in [(0,1),(0,-1),(1,0),(-1,0)]:
             nx, ny = x+dx, y+dy
-            if 0 <= nx < size and 0 <= ny < size and (nx, ny) in allowed_cells:
-                step_cost = cost_map.get((nx, ny), 1) if cost_map else 1
-                heapq.heappush(open_set, (
-                    g + step_cost + heuristic((nx,ny), target),
-                    g + step_cost,
-                    (nx, ny),
-                    path + [(nx, ny)]
-                ))
+            if 0 <= nx < size and 0 <= ny < size:
+                if kb[ny][nx]['ok'] or kb[ny][nx]['visited'] or (nx,ny)==target:
+                    step_cost = cost_map.get((nx, ny), 1) if cost_map else 1
+                    heapq.heappush(open_set, (
+                        g + step_cost + heuristic((nx,ny), target),
+                        g + step_cost,
+                        (nx, ny),
+                        path + [(nx, ny)]
+                    ))
 
     return None
