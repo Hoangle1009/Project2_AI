@@ -4,11 +4,6 @@ Wumpus World Project
 
 Requires Python >= 3.9
 
-Install the necessary libraries:
-
-pip install -r requirements.txt
-
-
 2. Run Demo
 The project supports two types of agents:
 
