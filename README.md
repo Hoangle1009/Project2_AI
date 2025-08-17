@@ -1,26 +1,28 @@
 Wumpus World Project
-1. Cài đặt môi trường
 
-Yêu cầu Python >= 3.9
+1. Environment Setup
 
-Cài đặt thư viện cần thiết:
+Requires Python >= 3.9
+
+Install the necessary libraries:
 
 pip install -r requirements.txt
 
-2. Chạy demo
 
-Trong project hỗ trợ 2 loại tác tử (agent):
+2. Run Demo
+The project supports two types of agents:
 
-Hybrid Agent → sử dụng A* và BFS để tìm đường đi tối ưu.
+Hybrid Agent → Uses A* and BFS to find the optimal path.
 
-Random Agent → chọn hành động ngẫu nhiên, không có chiến lược tối ưu.
+Random Agent → Chooses actions randomly, without an optimal strategy.
 
-=> Để chạy demo, dùng lệnh:
+To run the demo, use the command:
 
 python main.py
 
-3. Mô tả kết quả
 
-Hybrid Agent: di chuyển có kế hoạch, tìm đường đi tối ưu bằng A*, kết hợp BFS khi cần, và tránh được nguy hiểm.
+3. Result Description
 
-Random Agent: chọn bước đi ngẫu nhiên, dẫn đến đường đi vòng vèo hoặc có thể rơi vào hố.
+Hybrid Agent: Moves strategically, finds the optimal path using A*, switches to BFS when needed, and avoids dangers.
+
+Random Agent: Chooses random moves, which may lead to wandering paths or falling into pits.
